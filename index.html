@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Showdown Poker</title>
     <style>
         * {
@@ -12,39 +12,25 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: white;
             min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow-x: hidden;
-            -webkit-text-size-adjust: 100%;
-            -webkit-font-smoothing: antialiased;
+            padding: 20px;
         }
 
         .container {
-            width: 100vw;
-            height: 100vh;
-            padding: 8px;
-            box-sizing: border-box;
-            overflow: hidden;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .screen {
             display: none;
-            width: 100%;
-            height: 100%;
-            padding: 16px;
-            box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-            overflow-y: auto;
             text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
         }
 
         .screen.active {
@@ -52,162 +38,86 @@
         }
 
         h1 {
-            font-size: 24px;
-            margin: 16px 0;
+            font-size: 2em;
+            margin-bottom: 20px;
             color: #ffd700;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         h2 {
-            font-size: 18px;
-            margin: 12px 0;
-        }
-
-        h3 {
-            font-size: 16px;
-            margin: 8px 0;
+            font-size: 1.3em;
+            margin-bottom: 20px;
         }
 
         button {
             background: linear-gradient(45deg, #ff6b6b, #ee5a24);
             border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-size: 14px;
+            border-radius: 25px;
+            padding: 15px 30px;
+            font-size: 1.1em;
             color: white;
             cursor: pointer;
-            margin: 6px;
+            margin: 10px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            min-height: 44px;
-            min-width: 80px;
         }
 
         button:hover {
-            transform: translateY(-1px);
+            transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
-        button:disabled {
-            background: #666;
-            cursor: not-allowed;
-            transform: none;
-        }
-
         .nickname-input {
-            padding: 12px 16px;
-            font-size: 16px;
+            padding: 15px 20px;
+            font-size: 1.2em;
             border: none;
-            border-radius: 8px;
-            margin: 16px 0;
+            border-radius: 25px;
+            margin: 20px;
             text-align: center;
             background: rgba(255, 255, 255, 0.9);
             color: #333;
-            width: 250px;
+            width: 300px;
             max-width: 90%;
-        }
-
-        /* 게임 화면 - 단순한 세로 레이아웃 */
-        .game-area {
-            display: flex;
-            flex-direction: column;
-            height: calc(100vh - 40px);
-            gap: 12px;
-            padding: 0;
         }
 
         .game-info {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             background: rgba(255, 255, 255, 0.1);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            flex-shrink: 0;
-        }
-
-        .card-piles {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            flex-shrink: 0;
-        }
-
-        .pile-image {
-            width: 45px;
-            height: 65px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            color: white;
-            text-align: center;
-        }
-
-        .pile-deck {
-            background: linear-gradient(45deg, #2c5aa0, #1e3c72);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .pile-discard {
-            background: linear-gradient(45deg, #8e44ad, #9b59b6);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .player-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            gap: 8px;
-            min-height: 0;
-        }
-
-        .player-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 8px;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
 
         .hand {
             display: flex;
             justify-content: center;
-            gap: 4px;
-            padding: 0 8px;
-            flex-wrap: nowrap;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
         }
 
         .card {
-            width: 50px;
-            height: 70px;
+            width: 80px;
+            height: 120px;
             background: white;
-            border: 1px solid #333;
-            border-radius: 4px;
+            border: 2px solid #333;
+            border-radius: 8px;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
             color: #333;
             font-weight: bold;
-            font-size: 11px;
-            position: relative;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            font-size: 14px;
         }
 
         .card.selected {
             border-color: #e74c3c;
-            box-shadow: 0 0 8px rgba(231, 76, 60, 0.6);
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.6);
             background: #ffe6e6;
-            transform: translateY(-4px);
+            transform: translateY(-10px);
         }
 
         .card.red {
@@ -221,7 +131,6 @@
         .card.joker {
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
             color: white;
-            font-size: 12px;
         }
 
         .card-back {
@@ -229,144 +138,46 @@
             color: white;
         }
 
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            padding: 8px;
-            flex-shrink: 0;
-        }
-
         .result {
             background: rgba(255, 255, 255, 0.2);
-            padding: 8px;
-            border-radius: 6px;
-            margin: 4px 0;
-            font-size: 11px;
-        }
-
-        .result h3, .result h4 {
-            color: #ffd700;
-            margin-bottom: 4px;
-            font-size: 12px;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
         }
 
         .ranking {
-            margin-top: 16px;
-            text-align: left;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .ranking h2 {
-            text-align: center;
-            margin-bottom: 12px;
-            color: #ffd700;
-            font-size: 18px;
+            max-width: 500px;
+            margin: 20px auto;
         }
 
         .ranking-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            margin: 4px 0;
+            padding: 10px 15px;
+            margin: 5px 0;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            font-size: 12px;
+            border-radius: 8px;
         }
 
-        .ranking-item:first-child {
-            background: rgba(255, 215, 0, 0.2);
-            border: 1px solid #ffd700;
-        }
-
-        .ranking-item.current-player {
-            background: rgba(76, 175, 80, 0.3);
-            border: 1px solid #4caf50;
-        }
-
-        /* 애니메이션 */
-        @keyframes flyToPile {
-            from { transform: translateX(0) translateY(0) scale(1); opacity: 1; }
-            to { transform: translateX(-200px) translateY(0) scale(0.5); opacity: 0; }
-        }
-
-        @keyframes flyFromPile {
-            from { transform: translateX(200px) translateY(0) scale(0.5); opacity: 0; }
-            to { transform: translateX(0) translateY(0) scale(1); opacity: 1; }
-        }
-
-        .card.flying-to-pile {
-            animation: flyToPile 0.8s ease-out forwards;
-        }
-
-        .card.flying-from-pile {
-            animation: flyFromPile 0.8s ease-out forwards;
-        }
-
-        /* 모바일 최적화 */
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
             .card {
-                width: 45px;
-                height: 63px;
-                font-size: 10px;
-            }
-            
-            .hand {
-                gap: 3px;
-            }
-            
-            .game-info {
-                font-size: 11px;
-                padding: 6px 10px;
-            }
-            
-            button {
-                padding: 10px 16px;
-                font-size: 13px;
-                margin: 4px;
-            }
-            
-            .pile-image {
-                width: 40px;
-                height: 56px;
-                font-size: 9px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .card {
-                width: 40px;
-                height: 56px;
-                font-size: 9px;
-            }
-            
-            .hand {
-                gap: 2px;
-            }
-            
-            .game-info {
-                font-size: 10px;
-                padding: 4px 8px;
-            }
-            
-            button {
-                padding: 8px 12px;
+                width: 60px;
+                height: 90px;
                 font-size: 12px;
-                margin: 3px;
             }
             
-            .pile-image {
-                width: 35px;
-                height: 49px;
-                font-size: 8px;
+            .hand {
+                gap: 5px;
             }
             
             .container {
-                padding: 4px;
+                padding: 10px;
+            }
+            
+            .game-info {
+                font-size: 12px;
+                flex-direction: column;
+                gap: 10px;
             }
         }
     </style>
@@ -375,82 +186,53 @@
     <div class="container">
         <!-- 닉네임 입력 화면 -->
         <div class="screen active" id="nicknameScreen">
-            <h1>🃏 Showdown Poker 🃏</h1>
+            <h1>Showdown Poker</h1>
             <h2>닉네임을 입력하고 게임을 시작하세요</h2>
             <input type="text" class="nickname-input" id="nicknameInput" placeholder="닉네임 입력" maxlength="10">
             <br>
-            <button type="button" onclick="startGame()">게임 시작</button>
-            <button type="button" onclick="showRanking()">랭킹 보기</button>
+            <button onclick="startGame()">게임 시작</button>
+            <button onclick="showRanking()">랭킹 보기</button>
         </div>
 
         <!-- 랭킹 화면 -->
         <div class="screen" id="rankingScreen">
-            <h1>🏆 랭킹 🏆</h1>
+            <h1>랭킹</h1>
             <div class="ranking">
                 <div id="rankingList">
                     <div class="ranking-item">
-                        <span>순위를 불러오는 중...</span>
+                        <span>아직 순위가 없습니다</span>
+                        <span>첫 게임을 시작해보세요!</span>
                     </div>
                 </div>
             </div>
-            <button type="button" onclick="showNicknameInput()">돌아가기</button>
+            <button onclick="showNicknameInput()">돌아가기</button>
         </div>
 
         <!-- 게임 화면 -->
         <div class="screen" id="gameScreen">
-            <div class="game-area">
-                <!-- 게임 정보 -->
-                <div class="game-info">
-                    <div>
-                        <div>플레이어: <span id="playerName"></span></div>
-                        <div>점수: <span id="playerScore">0</span></div>
-                    </div>
-                    <div>
-                        <div>라운드: <span id="currentRound">1</span> / 5</div>
-                        <div>교환: <span id="exchangesLeft">3</span></div>
-                    </div>
-                    <div>
-                        <div>컴퓨터: <span id="computerScore">0</span></div>
-                    </div>
-                </div>
+            <div class="game-info">
+                <div>플레이어: <span id="playerName"></span> | 점수: <span id="playerScore">0</span></div>
+                <div>라운드: <span id="currentRound">1</span> / 5 | 교환: <span id="exchangesLeft">3</span></div>
+                <div>컴퓨터 점수: <span id="computerScore">0</span></div>
+            </div>
 
-                <!-- 카드더미들 -->
-                <div class="card-piles">
-                    <div class="pile-image pile-discard">
-                        <div>버린<br>카드</div>
-                    </div>
-                    <div class="pile-image pile-deck">
-                        <div>카드<br>덱</div>
-                    </div>
-                </div>
+            <h3>컴퓨터 카드</h3>
+            <div class="hand" id="computerHand"></div>
+            <div class="result" id="computerResult"></div>
+            
+            <h3>내 카드 (클릭하여 교체 선택)</h3>
+            <div class="hand" id="playerHand"></div>
+            <div class="result" id="playerCurrentHand">
+                <h4>현재 패: <span id="currentHandRank">-</span> | 예상 점수: <span id="currentHandScore">0</span>점</h4>
+            </div>
+            <div class="result" id="playerResult"></div>
 
-                <!-- 플레이어 영역 -->
-                <div class="player-area">
-                    <div class="player-section">
-                        <h3>컴퓨터 카드</h3>
-                        <div class="hand" id="computerHand"></div>
-                        <div class="result" id="computerResult"></div>
-                    </div>
-                    
-                    <div class="player-section">
-                        <h3>내 카드 (터치하여 교체 선택)</h3>
-                        <div class="hand" id="playerHand"></div>
-                        <div class="result" id="playerCurrentHand">
-                            <h4>현재 패: <span id="currentHandRank">-</span></h4>
-                            <p>예상 점수: <span id="currentHandScore">0</span>점</p>
-                        </div>
-                        <div class="result" id="playerResult"></div>
-                    </div>
-                </div>
-
-                <!-- 컨트롤 버튼들 -->
-                <div class="controls">
-                    <button type="button" id="exchangeBtn" onclick="exchangeCards()">카드 교환</button>
-                    <button type="button" id="finishRoundBtn" onclick="finishRound()" style="display: none;">라운드 완료</button>
-                    <button type="button" id="nextRoundBtn" onclick="nextRound()" style="display: none;">다음 라운드</button>
-                    <button type="button" id="newGameBtn" onclick="showNewGameOptions()" style="display: none;">게임 완료</button>
-                    <button type="button" onclick="showNicknameInput()">새 게임</button>
-                </div>
+            <div>
+                <button id="exchangeBtn" onclick="exchangeCards()">카드 교환</button>
+                <button id="finishRoundBtn" onclick="finishRound()">라운드 완료</button>
+                <button id="nextRoundBtn" onclick="nextRound()" style="display: none;">다음 라운드</button>
+                <button id="newGameBtn" onclick="showNewGameOptions()" style="display: none;">게임 완료</button>
+                <button onclick="showNicknameInput()">새 게임</button>
             </div>
         </div>
 
@@ -460,22 +242,16 @@
             <div id="finalScores"></div>
             
             <div class="ranking">
-                <h2>🏆 최종 랭킹 🏆</h2>
-                <div id="finalRankingList">
-                    <div class="ranking-item">
-                        <span>순위를 불러오는 중...</span>
-                    </div>
-                </div>
+                <h2>최종 랭킹</h2>
+                <div id="finalRankingList"></div>
             </div>
             
-            <button type="button" onclick="startNewGame()">새 게임</button>
+            <button onclick="startNewGame()">새 게임</button>
         </div>
     </div>
 
     <script>
-        console.log('게임 스크립트 시작');
-        
-        // 게임 상태 변수
+        // 게임 변수
         let currentPlayer = '';
         let currentRound = 1;
         let playerScore = 0;
@@ -487,10 +263,7 @@
         let computerExchangesLeft = 3;
         let roundComplete = false;
 
-        // 카드 생성
-        const suits = ['H', 'D', 'C', 'S'];
-        const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-
+        // 카드 클래스
         class Card {
             constructor(suit, rank, isJoker = false) {
                 this.suit = suit;
@@ -502,7 +275,7 @@
 
             toString() {
                 if (this.isJoker) return 'JOKER';
-                return `${this.rank}${this.suit}`;
+                return this.rank + this.suit;
             }
 
             getColor() {
@@ -513,15 +286,16 @@
 
         // 덱 생성
         function createDeck() {
-            console.log('덱 생성 중');
+            const suits = ['H', 'D', 'C', 'S'];
+            const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
             deck = [];
-            for (let i = 0; i < 4; i++) {
-                for (let j = 0; j < 13; j++) {
-                    deck.push(new Card(suits[i], ranks[j]));
+            
+            for (let suit of suits) {
+                for (let rank of ranks) {
+                    deck.push(new Card(suit, rank));
                 }
             }
             deck.push(new Card('', 'JOKER', true));
-            console.log('덱 생성 완료:', deck.length);
         }
 
         // 덱 셔플
@@ -542,10 +316,9 @@
             }
         }
 
-        // 포커 족보 판정
+        // 족보 판정 (단순화)
         function evaluateHand(hand) {
             const counts = {};
-            const suits = {};
             let hasJoker = false;
             
             hand.forEach(card => {
@@ -553,203 +326,57 @@
                     hasJoker = true;
                 } else {
                     counts[card.value] = (counts[card.value] || 0) + 1;
-                    suits[card.suit] = (suits[card.suit] || 0) + 1;
                 }
             });
 
-            const values = Object.keys(counts).map(k => parseInt(k)).sort((a, b) => a - b);
             const countValues = Object.values(counts).sort((a, b) => b - a);
-            const suitCounts = Object.values(suits);
             
             if (hasJoker) {
-                return evaluateWithJoker(counts, suits, values, suitCounts);
+                if (countValues[0] === 2) {
+                    return { rank: 4, name: '트리플', score: 400 };
+                }
+                return { rank: 2, name: '원페어', score: 200 };
             }
 
-            return evaluateNormalHand(counts, suits, values, countValues, suitCounts);
-        }
-
-        function evaluateWithJoker(counts, suits, values, suitCounts) {
-            const countValues = Object.values(counts).sort((a, b) => b - a);
-            
-            // 스트레이트 체크
-            const straightResult = checkStraightWithJoker(values, suitCounts);
-            if (straightResult.isStraight) {
-                if (straightResult.isFlush) {
-                    if (straightResult.isRoyal) {
-                        return { rank: 10, name: '로얄 플러시', score: 1000 };
-                    }
-                    return { rank: 9, name: '스트레이트 플러시', score: 900 };
-                }
-                return { rank: 5, name: '스트레이트', score: 500 };
-            }
-            
-            // 플러시
-            if (suitCounts.length === 1 && suitCounts[0] === 4) {
-                return { rank: 6, name: '플러시', score: 600 };
-            }
-            
-            // 포카드
-            if (countValues.length > 0 && countValues[0] === 3) {
-                return { rank: 8, name: '포카드', score: 800 };
-            }
-            
-            // 풀하우스
-            if (countValues.length >= 2 && countValues[0] === 2 && countValues[1] === 2) {
-                return { rank: 7, name: '풀하우스', score: 700 };
-            }
-            
-            // 트리플
-            if (countValues.length > 0 && countValues[0] === 2) {
-                return { rank: 4, name: '트리플', score: 400 };
-            }
-            
-            // 원페어
-            return { rank: 2, name: '원페어', score: 200 };
-        }
-
-        function checkStraightWithJoker(values, suitCounts) {
-            if (values.length < 4) return { isStraight: false, isFlush: false, isRoyal: false };
-            
-            const sortedValues = [...values].sort((a, b) => a - b);
-            const isFlush = suitCounts.length === 1 && suitCounts[0] === 4;
-            
-            const straightPatterns = [
-                [1, 2, 3, 4, 5], [2, 3, 4, 5, 6], [3, 4, 5, 6, 7],
-                [4, 5, 6, 7, 8], [5, 6, 7, 8, 9], [6, 7, 8, 9, 10],
-                [7, 8, 9, 10, 11], [8, 9, 10, 11, 12], [9, 10, 11, 12, 13],
-                [10, 11, 12, 13, 1]
-            ];
-            
-            for (const pattern of straightPatterns) {
-                let adjustedPattern = [...pattern];
-                let adjustedValues = [...sortedValues];
-                
-                if (pattern.includes(10) && pattern.includes(1)) {
-                    adjustedPattern = pattern.map(v => v === 1 ? 14 : v);
-                    adjustedValues = sortedValues.map(v => v === 1 ? 14 : v);
-                }
-                
-                let matchCount = 0;
-                for (const value of adjustedPattern) {
-                    if (adjustedValues.includes(value)) {
-                        matchCount++;
-                    }
-                }
-                
-                if (matchCount === 4) {
-                    const isRoyal = pattern.includes(1) && pattern.includes(10) && 
-                                  pattern.includes(11) && pattern.includes(12) && pattern.includes(13);
-                    return { 
-                        isStraight: true, 
-                        isFlush: isFlush, 
-                        isRoyal: isRoyal && isFlush 
-                    };
-                }
-            }
-            
-            return { isStraight: false, isFlush: isFlush, isRoyal: false };
-        }
-
-        function evaluateNormalHand(counts, suits, values, countValues, suitCounts) {
-            const isFlush = suitCounts.length === 1;
-            const isStraight = checkStraight(values);
-            
-            if (isFlush && isStraight && values.includes(1) && values.includes(10)) {
-                return { rank: 10, name: '로얄 플러시', score: 1000 };
-            }
-            
-            if (isFlush && isStraight) {
-                return { rank: 9, name: '스트레이트 플러시', score: 900 };
-            }
-            
             if (countValues[0] === 4) {
                 return { rank: 8, name: '포카드', score: 800 };
             }
-            
             if (countValues[0] === 3 && countValues[1] === 2) {
                 return { rank: 7, name: '풀하우스', score: 700 };
             }
-            
-            if (isFlush) {
-                return { rank: 6, name: '플러시', score: 600 };
-            }
-            
-            if (isStraight) {
-                return { rank: 5, name: '스트레이트', score: 500 };
-            }
-            
             if (countValues[0] === 3) {
                 return { rank: 4, name: '트리플', score: 400 };
             }
-            
             if (countValues[0] === 2 && countValues[1] === 2) {
                 return { rank: 3, name: '투페어', score: 300 };
             }
-            
             if (countValues[0] === 2) {
                 return { rank: 2, name: '원페어', score: 200 };
             }
             
+            const values = Object.keys(counts).map(k => parseInt(k));
             return { rank: 1, name: '하이카드', score: Math.max(...values) * 10 };
         }
 
-        function checkStraight(values) {
-            if (values.length !== 5) return false;
-            
-            for (let i = 1; i < values.length; i++) {
-                if (values[i] !== values[i-1] + 1) {
-                    break;
-                }
-                if (i === values.length - 1) return true;
-            }
-            
-            const royal = [1, 10, 11, 12, 13];
-            if (royal.every(v => values.includes(v))) {
-                return true;
-            }
-            
-            return false;
-        }
-
-        // UI 함수들
+        // 화면 전환
         function showScreen(screenId) {
-            console.log('화면 전환:', screenId);
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            const targetScreen = document.getElementById(screenId);
-            if (targetScreen) {
-                targetScreen.classList.add('active');
-            }
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
         }
 
         function showNicknameInput() {
-            console.log('닉네임 입력 화면으로 이동');
             showScreen('nicknameScreen');
-            const input = document.getElementById('nicknameInput');
-            if (input) {
-                input.value = '';
-                input.focus();
-            }
+            document.getElementById('nicknameInput').value = '';
+            document.getElementById('nicknameInput').focus();
         }
 
         function showRanking() {
-            console.log('랭킹 화면으로 이동');
             showScreen('rankingScreen');
             updateRankingDisplay();
         }
 
         function startGame() {
-            console.log('게임 시작 함수 호출됨');
-            const nicknameInput = document.getElementById('nicknameInput');
-            if (!nicknameInput) {
-                console.error('닉네임 입력 필드를 찾을 수 없음');
-                return;
-            }
-            
-            const nickname = nicknameInput.value.trim();
-            console.log('입력된 닉네임:', nickname);
-            
+            const nickname = document.getElementById('nicknameInput').value.trim();
             if (!nickname) {
                 alert('닉네임을 입력해주세요.');
                 return;
@@ -760,13 +387,11 @@
             playerScore = 0;
             computerScore = 0;
             
-            console.log('게임 화면으로 전환');
             showScreen('gameScreen');
             startNewRound();
         }
 
         function startNewRound() {
-            console.log('새 라운드 시작:', currentRound);
             exchangesLeft = 3;
             computerExchangesLeft = 3;
             roundComplete = false;
@@ -775,47 +400,257 @@
             shuffleDeck();
             dealCards();
             
-            playerHand.forEach(card => {
-                card.isSelected = false;
-            });
+            playerHand.forEach(card => card.isSelected = false);
             
-            animateInitialDeal();
+            updateGameUI();
+            updateHandDisplay();
+            
+            document.getElementById('exchangeBtn').style.display = 'inline-block';
+            document.getElementById('finishRoundBtn').style.display = 'inline-block';
+            document.getElementById('nextRoundBtn').style.display = 'none';
+            document.getElementById('newGameBtn').style.display = 'none';
+            document.getElementById('playerCurrentHand').style.display = 'block';
+            document.getElementById('playerResult').innerHTML = '';
+            document.getElementById('computerResult').innerHTML = '';
+            
+            updateCurrentHandDisplay();
         }
 
-        function animateInitialDeal() {
-            updateGameUI();
-            updateHandDisplay(true);
+        function updateGameUI() {
+            document.getElementById('playerName').textContent = currentPlayer;
+            document.getElementById('currentRound').textContent = currentRound;
+            document.getElementById('playerScore').textContent = playerScore;
+            document.getElementById('computerScore').textContent = computerScore;
+            document.getElementById('exchangesLeft').textContent = exchangesLeft;
+        }
+
+        function updateHandDisplay() {
+            updatePlayerHand();
+            updateComputerHand();
+        }
+
+        function updatePlayerHand() {
+            const handElement = document.getElementById('playerHand');
+            handElement.innerHTML = '';
             
-            const playerCurrentHand = document.getElementById('playerCurrentHand');
-            const playerResult = document.getElementById('playerResult');
-            const computerResult = document.getElementById('computerResult');
+            playerHand.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = `card ${card.getColor()}`;
+                if (card.isSelected) cardElement.classList.add('selected');
+                cardElement.textContent = card.toString();
+                cardElement.onclick = () => toggleCardSelected(index);
+                handElement.appendChild(cardElement);
+            });
+        }
+
+        function updateComputerHand() {
+            const handElement = document.getElementById('computerHand');
+            handElement.innerHTML = '';
             
-            if (playerCurrentHand) playerCurrentHand.style.display = 'block';
-            if (playerResult) playerResult.innerHTML = '';
-            if (computerResult) computerResult.innerHTML = '';
-            
-            const currentHandRank = document.getElementById('currentHandRank');
-            const currentHandScore = document.getElementById('currentHandScore');
-            if (currentHandRank) currentHandRank.textContent = '-';
-            if (currentHandScore) currentHandScore.textContent = '0';
-            
-            const exchangeBtn = document.getElementById('exchangeBtn');
-            const finishRoundBtn = document.getElementById('finishRoundBtn');
-            const nextRoundBtn = document.getElementById('nextRoundBtn');
-            const newGameBtn = document.getElementById('newGameBtn');
-            
-            if (exchangeBtn) {
-                exchangeBtn.style.display = 'inline-block';
-                exchangeBtn.disabled = false;
+            computerHand.forEach(card => {
+                const cardElement = document.createElement('div');
+                if (roundComplete) {
+                    cardElement.className = `card ${card.getColor()}`;
+                    cardElement.textContent = card.toString();
+                } else {
+                    cardElement.className = 'card card-back';
+                    cardElement.textContent = 'BACK';
+                }
+                handElement.appendChild(cardElement);
+            });
+        }
+
+        function updateCurrentHandDisplay() {
+            try {
+                const result = evaluateHand(playerHand);
+                document.getElementById('currentHandRank').textContent = result.name;
+                document.getElementById('currentHandScore').textContent = result.score;
+            } catch (e) {
+                document.getElementById('currentHandRank').textContent = '-';
+                document.getElementById('currentHandScore').textContent = '0';
             }
-            if (finishRoundBtn) finishRoundBtn.style.display = 'inline-block';
-            if (nextRoundBtn) nextRoundBtn.style.display = 'none';
-            if (newGameBtn) newGameBtn.style.display = 'none';
+        }
+
+        function toggleCardSelected(index) {
+            if (roundComplete) return;
+            playerHand[index].isSelected = !playerHand[index].isSelected;
+            updatePlayerHand();
+        }
+
+        function exchangeCards() {
+            if (exchangesLeft <= 0 || roundComplete) return;
             
-            setTimeout(() => {
-                const playerCards = document.querySelectorAll('#playerHand .card');
-                const computerCards = document.querySelectorAll('#computerHand .card');
+            const selectedIndices = [];
+            playerHand.forEach((card, index) => {
+                if (card.isSelected) selectedIndices.push(index);
+            });
+            
+            if (selectedIndices.length === 0) {
+                alert('교체할 카드를 선택해주세요.');
+                return;
+            }
+            
+            selectedIndices.forEach(index => {
+                playerHand[index] = deck.pop();
+                playerHand[index].isSelected = false;
+            });
+            
+            // 컴퓨터도 교환
+            if (computerExchangesLeft > 0) {
+                const exchangeCount = Math.floor(Math.random() * 3) + 1;
+                const indices = [];
+                while (indices.length < exchangeCount && indices.length < 5) {
+                    const randomIndex = Math.floor(Math.random() * 5);
+                    if (!indices.includes(randomIndex)) {
+                        indices.push(randomIndex);
+                        computerHand[randomIndex] = deck.pop();
+                    }
+                }
+                computerExchangesLeft--;
+            }
+            
+            exchangesLeft--;
+            updateHandDisplay();
+            updateGameUI();
+            updateCurrentHandDisplay();
+            
+            if (exchangesLeft === 0) {
+                finishRound();
+            }
+        }
+
+        function finishRound() {
+            if (roundComplete) return;
+            
+            // 컴퓨터 남은 교환
+            while (computerExchangesLeft > 0) {
+                const exchangeCount = Math.floor(Math.random() * 2) + 1;
+                for (let i = 0; i < exchangeCount && i < 5; i++) {
+                    const randomIndex = Math.floor(Math.random() * 5);
+                    computerHand[randomIndex] = deck.pop();
+                }
+                computerExchangesLeft--;
+            }
+            
+            roundComplete = true;
+            
+            const playerResult = evaluateHand(playerHand);
+            const computerResult = evaluateHand(computerHand);
+            
+            playerScore += playerResult.score;
+            computerScore += computerResult.score;
+            
+            document.getElementById('playerCurrentHand').style.display = 'none';
+            document.getElementById('playerResult').innerHTML = 
+                `<h3>${playerResult.name}</h3><p>+${playerResult.score}점</p>`;
+            document.getElementById('computerResult').innerHTML = 
+                `<h3>${computerResult.name}</h3><p>+${computerResult.score}점</p>`;
+            
+            updateHandDisplay();
+            updateGameUI();
+            
+            document.getElementById('exchangeBtn').style.display = 'none';
+            document.getElementById('finishRoundBtn').style.display = 'none';
+            
+            if (currentRound < 5) {
+                document.getElementById('nextRoundBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('newGameBtn').style.display = 'inline-block';
+            }
+        }
+
+        function nextRound() {
+            currentRound++;
+            startNewRound();
+        }
+
+        function showNewGameOptions() {
+            saveScore(currentPlayer, playerScore);
+            
+            const resultText = playerScore > computerScore ? 
+                '승리!' : (playerScore === computerScore ? '무승부!' : '패배...');
+            
+            document.getElementById('gameResult').textContent = resultText;
+            document.getElementById('finalScores').innerHTML = 
+                `<div style="margin: 20px 0;">
+                    <div>${currentPlayer}: ${playerScore}점</div>
+                    <div>컴퓨터: ${computerScore}점</div>
+                </div>`;
+            
+            updateFinalRankingDisplay();
+            showScreen('gameCompleteScreen');
+        }
+
+        function startNewGame() {
+            showNicknameInput();
+        }
+
+        function saveScore(nickname, score) {
+            try {
+                let rankings = JSON.parse(localStorage.getItem('pokerRankings') || '[]');
+                rankings.push({ nickname: nickname, score: score });
+                rankings.sort((a, b) => b.score - a.score);
+                rankings = rankings.slice(0, 10);
+                localStorage.setItem('pokerRankings', JSON.stringify(rankings));
+            } catch (e) {
+                console.log('랭킹 저장 실패');
+            }
+        }
+
+        function updateRankingDisplay() {
+            try {
+                const rankings = JSON.parse(localStorage.getItem('pokerRankings') || '[]');
+                const rankingList = document.getElementById('rankingList');
                 
-                [...playerCards, ...computerCards].forEach((card, index) => {
-                    setTimeout(() => {
-                        card.style.opacity = '1';
+                if (rankings.length === 0) {
+                    rankingList.innerHTML = '<div class="ranking-item"><span>아직 순위가 없습니다</span><span>첫 게임을 시작해보세요!</span></div>';
+                } else {
+                    rankingList.innerHTML = rankings.map((entry, index) => 
+                        `<div class="ranking-item">
+                            <span>${index + 1}위. ${entry.nickname}</span>
+                            <span>${entry.score}점</span>
+                        </div>`
+                    ).join('');
+                }
+            } catch (e) {
+                document.getElementById('rankingList').innerHTML = '<div class="ranking-item"><span>랭킹을 불러올 수 없습니다</span></div>';
+            }
+        }
+
+        function updateFinalRankingDisplay() {
+            try {
+                const rankings = JSON.parse(localStorage.getItem('pokerRankings') || '[]');
+                const rankingList = document.getElementById('finalRankingList');
+                
+                if (rankings.length === 0) {
+                    rankingList.innerHTML = '<div class="ranking-item"><span>첫 게임 완료!</span></div>';
+                } else {
+                    rankingList.innerHTML = rankings.map((entry, index) => 
+                        `<div class="ranking-item">
+                            <span>${index + 1}위. ${entry.nickname}</span>
+                            <span>${entry.score}점</span>
+                        </div>`
+                    ).join('');
+                }
+            } catch (e) {
+                document.getElementById('finalRankingList').innerHTML = '<div class="ranking-item"><span>랭킹 표시 오류</span></div>';
+            }
+        }
+
+        // 키보드 이벤트
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const activeScreen = document.querySelector('.screen.active');
+                if (activeScreen && activeScreen.id === 'nicknameScreen') {
+                    startGame();
+                }
+            }
+        });
+
+        // 페이지 로드 시
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('nicknameInput').focus();
+        });
+    </script>
+</body>
+</html>
