@@ -83,6 +83,17 @@
             min-width: 80px;
         }
 
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .nickname-input {
             padding: 12px 16px;
             font-size: 16px;
@@ -272,17 +283,12 @@
             border: 1px solid #ffd700;
         }
 
-        /* 애니메이션 단순화 */
-        @keyframes cardFlip {
-            0% { transform: rotateY(0deg); }
-            50% { transform: rotateY(90deg); }
-            100% { transform: rotateY(0deg); }
+        .ranking-item.current-player {
+            background: rgba(76, 175, 80, 0.3);
+            border: 1px solid #4caf50;
         }
 
-        .card.flip {
-            animation: cardFlip 0.6s ease;
-        }
-
+        /* 애니메이션 */
         @keyframes flyToPile {
             from { transform: translateX(0) translateY(0) scale(1); opacity: 1; }
             to { transform: translateX(-200px) translateY(0) scale(0.5); opacity: 0; }
@@ -301,15 +307,7 @@
             animation: flyFromPile 0.8s ease-out forwards;
         }
 
-        /* 모바일에서 호버 효과 제거 */
-        @media (hover: none) {
-            button:hover {
-                transform: none;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            }
-        }
-
-        /* 모바일 전용 최적화 제거 - 단순화된 반응형 */
+        /* 모바일 최적화 */
         @media (max-width: 768px) {
             .card {
                 width: 45px;
@@ -381,8 +379,8 @@
             <h2>닉네임을 입력하고 게임을 시작하세요</h2>
             <input type="text" class="nickname-input" id="nicknameInput" placeholder="닉네임 입력" maxlength="10">
             <br>
-            <button onclick="startGame()">게임 시작</button>
-            <button onclick="showRanking()">랭킹 보기</button>
+            <button type="button" onclick="startGame()">게임 시작</button>
+            <button type="button" onclick="showRanking()">랭킹 보기</button>
         </div>
 
         <!-- 랭킹 화면 -->
@@ -395,7 +393,7 @@
                     </div>
                 </div>
             </div>
-            <button onclick="showNicknameInput()">돌아가기</button>
+            <button type="button" onclick="showNicknameInput()">돌아가기</button>
         </div>
 
         <!-- 게임 화면 -->
@@ -447,11 +445,11 @@
 
                 <!-- 컨트롤 버튼들 -->
                 <div class="controls">
-                    <button id="exchangeBtn" onclick="exchangeCards()">카드 교환</button>
-                    <button id="finishRoundBtn" onclick="finishRound()" style="display: none;">라운드 완료</button>
-                    <button id="nextRoundBtn" onclick="nextRound()" style="display: none;">다음 라운드</button>
-                    <button id="newGameBtn" onclick="showNewGameOptions()" style="display: none;">게임 완료</button>
-                    <button onclick="showNicknameInput()">새 게임</button>
+                    <button type="button" id="exchangeBtn" onclick="exchangeCards()">카드 교환</button>
+                    <button type="button" id="finishRoundBtn" onclick="finishRound()" style="display: none;">라운드 완료</button>
+                    <button type="button" id="nextRoundBtn" onclick="nextRound()" style="display: none;">다음 라운드</button>
+                    <button type="button" id="newGameBtn" onclick="showNewGameOptions()" style="display: none;">게임 완료</button>
+                    <button type="button" onclick="showNicknameInput()">새 게임</button>
                 </div>
             </div>
         </div>
@@ -470,11 +468,13 @@
                 </div>
             </div>
             
-            <button onclick="startNewGame()">새 게임</button>
+            <button type="button" onclick="startNewGame()">새 게임</button>
         </div>
     </div>
 
     <script>
+        console.log('게임 스크립트 시작');
+        
         // 게임 상태 변수
         let currentPlayer = '';
         let currentRound = 1;
@@ -487,10 +487,8 @@
         let computerExchangesLeft = 3;
         let roundComplete = false;
 
-        // 카드 생성 - 특수문자 대신 텍스트 사용
-        const suits = ['H', 'D', 'C', 'S']; // Hearts, Diamonds, Clubs, Spades
-        const suitNames = ['hearts', 'diamonds', 'clubs', 'spades'];
-        const suitSymbols = ['♥', '♦', '♣', '♠'];
+        // 카드 생성
+        const suits = ['H', 'D', 'C', 'S'];
         const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 
         class Card {
@@ -498,25 +496,13 @@
                 this.suit = suit;
                 this.rank = rank;
                 this.isJoker = isJoker;
-                this.isFixed = false;
-                this.isSelected = false; // 교체 선택 상태
+                this.isSelected = false;
                 this.value = isJoker ? 0 : (rank === 'A' ? 1 : (rank === 'J' ? 11 : (rank === 'Q' ? 12 : (rank === 'K' ? 13 : parseInt(rank)))));
             }
 
             toString() {
                 if (this.isJoker) return 'JOKER';
-                
-                // 모바일에서 안전한 표시
-                let suitSymbol;
-                switch(this.suit) {
-                    case 'H': suitSymbol = 'H'; break; // Hearts
-                    case 'D': suitSymbol = 'D'; break; // Diamonds  
-                    case 'C': suitSymbol = 'C'; break; // Clubs
-                    case 'S': suitSymbol = 'S'; break; // Spades
-                    default: suitSymbol = this.suit;
-                }
-                
-                return `${this.rank}${suitSymbol}`;
+                return `${this.rank}${this.suit}`;
             }
 
             getColor() {
@@ -525,15 +511,17 @@
             }
         }
 
-        // 덱 생성 함수
+        // 덱 생성
         function createDeck() {
+            console.log('덱 생성 중');
             deck = [];
             for (let i = 0; i < 4; i++) {
                 for (let j = 0; j < 13; j++) {
                     deck.push(new Card(suits[i], ranks[j]));
                 }
             }
-            deck.push(new Card('', 'JOKER', true)); // 조커 추가
+            deck.push(new Card('', 'JOKER', true));
+            console.log('덱 생성 완료:', deck.length);
         }
 
         // 덱 셔플
@@ -544,7 +532,7 @@
             }
         }
 
-        // 카드 5장 배분
+        // 카드 배분
         function dealCards() {
             playerHand = [];
             computerHand = [];
@@ -560,7 +548,6 @@
             const suits = {};
             let hasJoker = false;
             
-            // 조커 확인 및 카드 분석
             hand.forEach(card => {
                 if (card.isJoker) {
                     hasJoker = true;
@@ -574,7 +561,6 @@
             const countValues = Object.values(counts).sort((a, b) => b - a);
             const suitCounts = Object.values(suits);
             
-            // 조커를 활용한 최적 족보 찾기
             if (hasJoker) {
                 return evaluateWithJoker(counts, suits, values, suitCounts);
             }
@@ -583,10 +569,9 @@
         }
 
         function evaluateWithJoker(counts, suits, values, suitCounts) {
-            // 조커가 있을 때 가능한 최고 족보를 찾음
             const countValues = Object.values(counts).sort((a, b) => b - a);
             
-            // 스트레이트 가능성을 먼저 체크 (조커로 연결 가능한지)
+            // 스트레이트 체크
             const straightResult = checkStraightWithJoker(values, suitCounts);
             if (straightResult.isStraight) {
                 if (straightResult.isFlush) {
@@ -598,34 +583,27 @@
                 return { rank: 5, name: '스트레이트', score: 500 };
             }
             
-            // 플러시 가능성 체크 (같은 무늬 4장 + 조커)
+            // 플러시
             if (suitCounts.length === 1 && suitCounts[0] === 4) {
                 return { rank: 6, name: '플러시', score: 600 };
             }
             
-            // 포카드 가능성 (같은 숫자 3장 + 조커)
+            // 포카드
             if (countValues.length > 0 && countValues[0] === 3) {
                 return { rank: 8, name: '포카드', score: 800 };
             }
             
-            // 풀하우스 가능성 (2페어 + 조커로 한쪽을 트리플로)
+            // 풀하우스
             if (countValues.length >= 2 && countValues[0] === 2 && countValues[1] === 2) {
                 return { rank: 7, name: '풀하우스', score: 700 };
             }
             
-            // 트리플 가능성 (같은 숫자 2장 + 조커)
+            // 트리플
             if (countValues.length > 0 && countValues[0] === 2) {
                 return { rank: 4, name: '트리플', score: 400 };
             }
             
-            // 투페어 가능성 (이미 1페어가 있어야 조커로 다른 페어 생성)
-            // 모든 카드가 다른 숫자면 조커로는 원페어만 가능
-            if (countValues.length > 0 && countValues[0] === 1) {
-                // 모든 카드가 서로 다른 경우 - 조커로 원페어만 가능
-                return { rank: 2, name: '원페어', score: 200 };
-            }
-            
-            // 기본적으로 조커가 있으면 최소한 원페어는 보장
+            // 원페어
             return { rank: 2, name: '원페어', score: 200 };
         }
 
@@ -635,27 +613,18 @@
             const sortedValues = [...values].sort((a, b) => a - b);
             const isFlush = suitCounts.length === 1 && suitCounts[0] === 4;
             
-            // 가능한 모든 연속 5장 스트레이트 패턴 확인
             const straightPatterns = [
-                [1, 2, 3, 4, 5],    // A-2-3-4-5
-                [2, 3, 4, 5, 6],    // 2-3-4-5-6
-                [3, 4, 5, 6, 7],    // 3-4-5-6-7
-                [4, 5, 6, 7, 8],    // 4-5-6-7-8
-                [5, 6, 7, 8, 9],    // 5-6-7-8-9
-                [6, 7, 8, 9, 10],   // 6-7-8-9-10
-                [7, 8, 9, 10, 11],  // 7-8-9-10-J
-                [8, 9, 10, 11, 12], // 8-9-10-J-Q
-                [9, 10, 11, 12, 13], // 9-10-J-Q-K
-                [10, 11, 12, 13, 1]  // 10-J-Q-K-A (A를 14로 취급)
+                [1, 2, 3, 4, 5], [2, 3, 4, 5, 6], [3, 4, 5, 6, 7],
+                [4, 5, 6, 7, 8], [5, 6, 7, 8, 9], [6, 7, 8, 9, 10],
+                [7, 8, 9, 10, 11], [8, 9, 10, 11, 12], [9, 10, 11, 12, 13],
+                [10, 11, 12, 13, 1]
             ];
             
             for (const pattern of straightPatterns) {
-                // 10-J-Q-K-A 패턴의 경우 A를 14로 변환하여 비교
                 let adjustedPattern = [...pattern];
                 let adjustedValues = [...sortedValues];
                 
                 if (pattern.includes(10) && pattern.includes(1)) {
-                    // 로얄 스트레이트의 경우 A를 14로 처리
                     adjustedPattern = pattern.map(v => v === 1 ? 14 : v);
                     adjustedValues = sortedValues.map(v => v === 1 ? 14 : v);
                 }
@@ -667,7 +636,6 @@
                     }
                 }
                 
-                // 정확히 4장이 매치되면 조커로 1장 보완하여 스트레이트 완성
                 if (matchCount === 4) {
                     const isRoyal = pattern.includes(1) && pattern.includes(10) && 
                                   pattern.includes(11) && pattern.includes(12) && pattern.includes(13);
@@ -686,56 +654,168 @@
             const isFlush = suitCounts.length === 1;
             const isStraight = checkStraight(values);
             
-            // 로얄 플러시
             if (isFlush && isStraight && values.includes(1) && values.includes(10)) {
                 return { rank: 10, name: '로얄 플러시', score: 1000 };
             }
             
-            // 스트레이트 플러시
             if (isFlush && isStraight) {
                 return { rank: 9, name: '스트레이트 플러시', score: 900 };
             }
             
-            // 포카드
             if (countValues[0] === 4) {
                 return { rank: 8, name: '포카드', score: 800 };
             }
             
-            // 풀하우스
             if (countValues[0] === 3 && countValues[1] === 2) {
                 return { rank: 7, name: '풀하우스', score: 700 };
             }
             
-            // 플러시
             if (isFlush) {
                 return { rank: 6, name: '플러시', score: 600 };
             }
             
-            // 스트레이트
             if (isStraight) {
                 return { rank: 5, name: '스트레이트', score: 500 };
             }
             
-            // 트리플
             if (countValues[0] === 3) {
                 return { rank: 4, name: '트리플', score: 400 };
             }
             
-            // 투페어
             if (countValues[0] === 2 && countValues[1] === 2) {
                 return { rank: 3, name: '투페어', score: 300 };
             }
             
-            // 원페어
             if (countValues[0] === 2) {
                 return { rank: 2, name: '원페어', score: 200 };
             }
             
-            // 하이카드
             return { rank: 1, name: '하이카드', score: Math.max(...values) * 10 };
         }
 
         function checkStraight(values) {
             if (values.length !== 5) return false;
             
-            // 일반
+            for (let i = 1; i < values.length; i++) {
+                if (values[i] !== values[i-1] + 1) {
+                    break;
+                }
+                if (i === values.length - 1) return true;
+            }
+            
+            const royal = [1, 10, 11, 12, 13];
+            if (royal.every(v => values.includes(v))) {
+                return true;
+            }
+            
+            return false;
+        }
+
+        // UI 함수들
+        function showScreen(screenId) {
+            console.log('화면 전환:', screenId);
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            const targetScreen = document.getElementById(screenId);
+            if (targetScreen) {
+                targetScreen.classList.add('active');
+            }
+        }
+
+        function showNicknameInput() {
+            console.log('닉네임 입력 화면으로 이동');
+            showScreen('nicknameScreen');
+            const input = document.getElementById('nicknameInput');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        function showRanking() {
+            console.log('랭킹 화면으로 이동');
+            showScreen('rankingScreen');
+            updateRankingDisplay();
+        }
+
+        function startGame() {
+            console.log('게임 시작 함수 호출됨');
+            const nicknameInput = document.getElementById('nicknameInput');
+            if (!nicknameInput) {
+                console.error('닉네임 입력 필드를 찾을 수 없음');
+                return;
+            }
+            
+            const nickname = nicknameInput.value.trim();
+            console.log('입력된 닉네임:', nickname);
+            
+            if (!nickname) {
+                alert('닉네임을 입력해주세요.');
+                return;
+            }
+            
+            currentPlayer = nickname;
+            currentRound = 1;
+            playerScore = 0;
+            computerScore = 0;
+            
+            console.log('게임 화면으로 전환');
+            showScreen('gameScreen');
+            startNewRound();
+        }
+
+        function startNewRound() {
+            console.log('새 라운드 시작:', currentRound);
+            exchangesLeft = 3;
+            computerExchangesLeft = 3;
+            roundComplete = false;
+            
+            createDeck();
+            shuffleDeck();
+            dealCards();
+            
+            playerHand.forEach(card => {
+                card.isSelected = false;
+            });
+            
+            animateInitialDeal();
+        }
+
+        function animateInitialDeal() {
+            updateGameUI();
+            updateHandDisplay(true);
+            
+            const playerCurrentHand = document.getElementById('playerCurrentHand');
+            const playerResult = document.getElementById('playerResult');
+            const computerResult = document.getElementById('computerResult');
+            
+            if (playerCurrentHand) playerCurrentHand.style.display = 'block';
+            if (playerResult) playerResult.innerHTML = '';
+            if (computerResult) computerResult.innerHTML = '';
+            
+            const currentHandRank = document.getElementById('currentHandRank');
+            const currentHandScore = document.getElementById('currentHandScore');
+            if (currentHandRank) currentHandRank.textContent = '-';
+            if (currentHandScore) currentHandScore.textContent = '0';
+            
+            const exchangeBtn = document.getElementById('exchangeBtn');
+            const finishRoundBtn = document.getElementById('finishRoundBtn');
+            const nextRoundBtn = document.getElementById('nextRoundBtn');
+            const newGameBtn = document.getElementById('newGameBtn');
+            
+            if (exchangeBtn) {
+                exchangeBtn.style.display = 'inline-block';
+                exchangeBtn.disabled = false;
+            }
+            if (finishRoundBtn) finishRoundBtn.style.display = 'inline-block';
+            if (nextRoundBtn) nextRoundBtn.style.display = 'none';
+            if (newGameBtn) newGameBtn.style.display = 'none';
+            
+            setTimeout(() => {
+                const playerCards = document.querySelectorAll('#playerHand .card');
+                const computerCards = document.querySelectorAll('#computerHand .card');
+                
+                [...playerCards, ...computerCards].forEach((card, index) => {
+                    setTimeout(() => {
+                        card.style.opacity = '1';
